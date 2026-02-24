@@ -6,4 +6,3 @@ name: "available-work-phases"
 * Documentation: To write documents. This Work Phase will return a well written, well formatted document in markdown.
 * Validation: Always use this Work Phase to validate and verify that the final project results meet the initial requirements, returning a report on the validation result. Do NOT use this phase to find, edit or create files.
 * Code Review: To perform a code review that will scrutinize source code for formatting, syntax, style quality, and runnability. Will fix any problems in the code and return a detailed feedback document with findings. Use this Work Phase to do a code review and confirm code is correctly written.
-* Research: To perform research or investigations on any topic (including engineering) to investigate ideas, decide between different options, or to better understand the scope of a problem or project. This Work Phase will return recommendations or the result of research.
