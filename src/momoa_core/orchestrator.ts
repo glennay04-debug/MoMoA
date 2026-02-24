@@ -210,7 +210,7 @@ export class Orchestrator {
   private async generateProjectSummary(): Promise<{result: string; retrospective: string; feedback: string}> {
     let response;
 
-    this.updateLog(`Generating Project Summary...`)
+    this.updateLog(`Generating Project Summary.`)
 
     // Get the string containing all the files and docs
     const fileListString = (this.editedFileList?.size && Array.from(this.editedFileList).join('\n')) 
@@ -250,7 +250,7 @@ export class Orchestrator {
   }
 
   private async summarizeOrchestratorUpdate(lastOrchestratorResponse: string): Promise<string> {
-    let current_status_message = "Trying to solve this problem..."
+    let current_status_message = "Trying to solve this problem."
 
     const completed_status_message_prompt = await replaceRuntimePlaceholders(await getAssetString("summarize-progress-start"), {
       LastOrchestratorResponse: lastOrchestratorResponse
@@ -308,8 +308,6 @@ export class Orchestrator {
 
       this.transcriptManager.addEntry('user', preamble);
 
-      await this.updateProgressLog("Pre-initializing ephemeral scratchpad:")
-
       const welcomeMessagePrompt = await getAssetString('welcome-message-prompt');
       let welcomeMessage = welcomeMessagePrompt.split('\n')[1];
 
@@ -329,8 +327,10 @@ export class Orchestrator {
         await this.updateLog(`# Mode: ${this.mode}`);        
 
       let uploadFilesLog = `Uploaded Files:\n`;
-      uploadFilesLog += Array.from(this.fileMap.keys()).join('\n* ');
-      uploadFilesLog += Array.from(this.binaryFileMap.keys()).join('\n* ')
+      if (this.fileMap.size > 0)  
+        uploadFilesLog += '* ' + Array.from(this.fileMap.keys()).join('\n* ');
+      if (this.binaryFileMap.size > 0) 
+        uploadFilesLog += '* ' + Array.from(this.binaryFileMap.keys()).join('\n* ')
 
       await this.updateLog(uploadFilesLog, false);
 
@@ -338,26 +338,27 @@ export class Orchestrator {
         await this.updateProgressLog(uploadFilesLog);
 
       // Enrich the initial prompt.
-      await this.updateProgressLog('\n## Enriched User Prompt\n----\n<pre>');
+      await this.updateProgressLog('\n## Enriched User Prompt\n----');
 
       this.initialPrompt = await enrichPrompt("prompt-enricher", this.initialPrompt.trim(), this.assumptions, this.projectSpecification ?? "---No specification provided---", this.multiAgentGeminiClient, this.sendMessage, this.initialImage, this.initialImageMimeType);
-      await this.updateLog(`# Enriched SDLC Agent Task Request:\n${this.initialPrompt}`);
 
-      await this.updateProgressLog(this.initialPrompt);
-      await this.updateProgressLog('</pre>\n----\n');
+      await this.updateProgressLog(`\`\`\`\`\n${this.initialPrompt}\n\`\`\`\``);
+      await this.updateProgressLog('----\n');
+
+      await this.updateLog(`# Enriched SDLC Agent Task Request:\n${this.initialPrompt}`);
 
       await this.updateProgressLog("## Attachment Analysis")
 
       this.sendMessage(JSON.stringify({
         status: 'PROGRESS_UPDATES',
-        current_status_message: 'Checking for an attached image...',
+        current_status_message: '### Checking for an attached image',
       }));
 
       // Add any image that was attached.
       if (this.initialImageMimeType && this.initialImage) {
         this.transcriptManager.addImage(`The user has provided the following image that has been attached to their prompt.`, this.initialImage, this.initialImageMimeType);
         await this.updateLog(`\n# Added the attached ${this.initialImageMimeType}`);
-        await this.updateProgressLog(`Adding image prompt attachement: ${this.initialImageMimeType}`);
+        await this.updateProgressLog(`Added image prompt attachement: ${this.initialImageMimeType}`);
       } else {
         await this.updateLog(`\n# No Image Attachment Provided`);
       }
@@ -368,7 +369,7 @@ export class Orchestrator {
       this.transcriptManager.addEntry('user', faqString, { documentId: EXISTING_FAQ_ID, replacementIfSuperseded: faqString });
 
       // Analyze the files
-      await this.updateProgressLog("Analyzing associated files.")
+      await this.updateProgressLog("### Analyzing provided project files")
       await analyzeFiles(this.fileMap, this.multiAgentGeminiClient);
 
       await analyzeAndSetTaskRelevantFiles(
@@ -411,7 +412,7 @@ export class Orchestrator {
 
           this.sendMessage(JSON.stringify({
             status: 'PROGRESS_UPDATES',
-            current_status_message: 'Cancelling Project...',
+            current_status_message: 'Cancelling Project.',
             completed_status_message: '## Cancelling Project\n\nThe Orchestrator has received a cancellation request. Shutting down.'
           }));
 
