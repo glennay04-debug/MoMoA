@@ -535,7 +535,7 @@ function editFile(filename: string, fromString: string, toString: string, contex
         } else {
              context.fileMap.set(filename, toString);
              result = `The requested edit of \`${filename}\` has been successfully completed.`;
-             progressUpdate = `${result}\n<pre>\n${toString}\n</pre>`;
+             progressUpdate = `${result}\n\`\`\`\`\n${toString}\n\`\`\`\``;
         }
     }
   } else if (!fileExists && (fromString)) {
@@ -589,8 +589,8 @@ function editFile(filename: string, fromString: string, toString: string, contex
                   .filter(line => !line.startsWith('==================================================================='))
                   .join('\n');
 
-                progressUpdate = `${result}\n<pre>\n${cleanPatch}\n</pre>`;
-              } catch { progressUpdate = `${result}\n<pre>\n${newFileContent}\n</pre>` }
+                progressUpdate = `${result}\n\`\`\`\`\n${cleanPatch}\n\`\`\`\``;
+              } catch { progressUpdate = `${result}\n\`\`\`\`\n${newFileContent}\n\`\`\`\`` }
           }
       } else if (replacementOptions.multipleMatches) { 
           worklog = `Smart Editor: The fuzzy matcher found ${replacementOptions.multipleMatches.length} possible matches for the replacement string requests for '${filename}'. Asking the Smart Replace tool to disambiguate.`;

@@ -38,7 +38,7 @@ export const fileSearchTool: MultiAgentTool = {
 
     context.sendMessage(JSON.stringify({
       status: "PROGRESS_UPDATES",
-      completed_status_message: `Searching for '${query}'`,
+      completed_status_message: `Searching for \`${query}\``,
     }));
 
     // 1. Search text file content.
@@ -64,11 +64,11 @@ export const fileSearchTool: MultiAgentTool = {
     const finalResultArray = Array.from(searchResults);
     const replacementString = `---FILE SEARCH RESULTS INTENTIONALLY REMOVED---`;
 
-    const result = finalResultArray.length > 0 ? finalResultArray.join('\n') : `The file search tool found no matches for your query.`;
+    const result = finalResultArray.length > 0 ? finalResultArray.join('\n') : `No matches found for your query.`;
 
     context.sendMessage(JSON.stringify({
       status: "PROGRESS_UPDATES",
-      completed_status_message: result,
+      completed_status_message: `\`\`\`\n${result.trim()}\n\`\`\``,
     }));
 
     return {

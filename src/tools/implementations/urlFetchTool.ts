@@ -214,7 +214,7 @@ export const urlFetchTool: MultiAgentTool = {
 
       context.sendMessage(JSON.stringify({
           status: "PROGRESS_UPDATES",
-          completed_status_message: `<pre>\n${content}\n</pre>`,
+          completed_status_message: `\`\`\`\`\n${content}\n\`\`\`\``,
         })
       );
 

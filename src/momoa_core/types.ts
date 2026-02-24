@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import type * as acp from "@agentclientprotocol/sdk";
 import { GeminiClient } from '../services/geminiClient.js';
 import { TranscriptManager } from '../services/transcriptManager.js';
 import { UserSecrets } from '../shared/model.js';

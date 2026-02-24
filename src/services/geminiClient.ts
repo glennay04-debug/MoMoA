@@ -261,7 +261,7 @@ export class GeminiClient {
     errorMessage: string,
   ): GenerateContentResponse {
     console.error(`GeminiClient returning error response: ${errorMessage}`);
-    const errorText = `---The Gemini API was unable to provide a response (${errorMessage})---`;
+    const errorText = `--- The Gemini API was unable to provide a response (${errorMessage}) ---`;
     return {
       candidates: [
         {

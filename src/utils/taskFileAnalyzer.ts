@@ -119,11 +119,18 @@ export async function analyzeRelevantFilesForTask(
   imageMimeType?: string
 ): Promise<TaskRelevantFile[]> {
 
-  const updateLog = async (message: string) => {
+  const updateLog = async (message: string, updateProgress: boolean = false) => {
     sendMessage(JSON.stringify({
       status: 'WORK_LOG',
       message: message,
     }));
+
+    if (updateProgress) {
+      sendMessage(JSON.stringify({
+        status: 'PROGRESS_UPDATES',
+        completed_status_message: message,
+      }));
+    }
   };
 
   const transcript = new TranscriptManager({ 
@@ -141,7 +148,7 @@ export async function analyzeRelevantFilesForTask(
     transcript.addImage(initialPrompt, image, imageMimeType);
   else
     transcript.addEntry('user', initialPrompt);
-  await updateLog("\n# Analyzing files for relevancy to the task");
+  await updateLog("Analyzing files for relevancy to the task.", true);
 
   const toolContext: MultiAgentToolContext = {
     fileMap: fileMap,
@@ -217,7 +224,14 @@ export async function analyzeRelevantFilesForTask(
           await updateLog(`(Filtered out ${originalCount - relevantFiles.length} non-existent files from analysis results)`);
         }
         
-        await updateLog(`## Relevant Files\n${JSON.stringify(relevantFiles, null, 2)}`);
+        await updateLog(`#### Potentially relevant files identified`, true);
+
+        const formattedOutput = relevantFiles
+          .map(item => `\`${item.filename}\`\n\n${item.description}`)
+          .join('\n\n');
+
+        await updateLog(`${formattedOutput}`, true);
+
         return relevantFiles; // Success!
       } catch (e: any) {
         const errorMsg = `TOOL_RESPONSE: Error parsing final JSON. ${e.message}. Please provide the full, correct JSON array again.`;
@@ -239,7 +253,7 @@ export async function analyzeRelevantFilesForTask(
     if (toolRequest?.toolName) {
       // A standard tool was found
       const tool = getTool(toolRequest.toolName);
-      await updateLog(`Invoking Tool: '${tool?.displayName || toolRequest.toolName}'`);
+      await updateLog(`'${tool?.displayName || toolRequest.toolName}' Invoked`);
 
       try {
         // Execute the tool using the standard function
