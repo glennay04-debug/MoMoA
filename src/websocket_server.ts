@@ -290,7 +290,7 @@ async function handleInitialRequest(clientUUID: string, requestData: InitialRequ
       gracePeriodMs
     } = requestData;
 
-    const projectSpecification = "";
+    const projectSpecification = requestProjectSpecification ?? "";
 
     // 1. Create a new, request-specific Config instance
     const requestConfig = new Config({
@@ -356,7 +356,8 @@ async function handleInitialRequest(clientUUID: string, requestData: InitialRequ
       controller.signal,
       mode,
       maxDurationMs,
-      gracePeriodMs
+      gracePeriodMs,
+      maxTurns
     );
 
     orchestratorInstances.set(clientUUID, orchestrator);
