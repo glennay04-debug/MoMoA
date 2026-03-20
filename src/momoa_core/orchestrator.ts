@@ -115,7 +115,8 @@ export class Orchestrator {
     signal?: AbortSignal,
     mode?: ServerMode,
     maxDurationMs?: number,
-    gracePeriodMs?: number
+    gracePeriodMs?: number,
+    maxTurns?: number
   ) {
     this.initialPrompt = initialPrompt;
     this.initialImage = initialImage;
@@ -135,7 +136,7 @@ export class Orchestrator {
     this.notWorkingBuild = notWorkingBuild;
     this.transcriptManager = new TranscriptManager({ context: infrastructureContext });
     this.overseer = undefined;
-    this.maxTurns = 20;
+    this.maxTurns = maxTurns ?? 20;
     this.signal = signal;
     this.saveFiles = saveFiles;
 
